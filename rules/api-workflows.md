@@ -3,18 +3,19 @@
 > Base URL: `$CLAWFY_BASE_URL` (default: `http://localhost:3001`)
 > All requests require: `x-api-key: $CLAWFY_API_KEY`
 > Content-Type: `application/json` for all requests
+> **IMPORTANT:** This API uses `/api/` prefix (not `/api/`)
 
 ---
 
 ## 1. Health Check
 
-### GET /api/v1/health
+### GET /api/health
 
 Verify the API is running and healthy.
 
 **Request:**
 ```bash
-curl -s http://localhost:3001/api/v1/health \
+curl -s http://localhost:3001/api/health \
   -H "x-api-key: $CLAWFY_API_KEY"
 ```
 
@@ -32,7 +33,7 @@ curl -s http://localhost:3001/api/v1/health \
 
 ## 2. List Workflows
 
-### GET /api/v1/workflows
+### GET /api/workflows
 
 Returns all workflows for the authenticated user.
 
@@ -44,7 +45,7 @@ Returns all workflows for the authenticated user.
 
 **Request:**
 ```bash
-curl -s "http://localhost:3001/api/v1/workflows?limit=10" \
+curl -s "http://localhost:3001/api/workflows?limit=10" \
   -H "x-api-key: $CLAWFY_API_KEY"
 ```
 
@@ -69,7 +70,7 @@ curl -s "http://localhost:3001/api/v1/workflows?limit=10" \
 
 ## 3. Get Workflow Details
 
-### GET /api/v1/workflows/:id
+### GET /api/workflows/:id
 
 Get full details of a specific workflow including its graph structure.
 
@@ -80,7 +81,7 @@ Get full details of a specific workflow including its graph structure.
 
 **Request:**
 ```bash
-curl -s http://localhost:3001/api/v1/workflows/wf_abc123 \
+curl -s http://localhost:3001/api/workflows/wf_abc123 \
   -H "x-api-key: $CLAWFY_API_KEY"
 ```
 
@@ -114,7 +115,7 @@ curl -s http://localhost:3001/api/v1/workflows/wf_abc123 \
 
 ## 4. Create Workflow
 
-### POST /api/v1/workflows
+### POST /api/workflows
 
 Create a new workflow from DSL string.
 
@@ -127,7 +128,7 @@ Create a new workflow from DSL string.
 
 **Request:**
 ```bash
-curl -s -X POST http://localhost:3001/api/v1/workflows \
+curl -s -X POST http://localhost:3001/api/workflows \
   -H "x-api-key: $CLAWFY_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{
@@ -154,55 +155,49 @@ curl -s -X POST http://localhost:3001/api/v1/workflows \
 
 ## 5. Execute Workflow
 
-### POST /api/v1/executions
+### POST /api/workflows/:id/execute
 
-Start a workflow execution. Returns immediately with an `executionId` for polling.
+Start a workflow execution by workflow ID. Returns immediately with an `executionId` for polling.
 
-**Request Body:**
-| Field | Type | Required | Description |
-|-------|------|----------|-------------|
-| `workflowId` | string | Yes | ID of the workflow to execute |
-| `input` | object | No | Input values for workflow nodes (key = nodeId, value = input) |
-| `seed` | number | No | Random seed for reproducibility |
-| `priority` | string | No | `high`, `normal`, or `low` (defaults to `normal` or workflow default) |
+**Path Parameters:**
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `id` | string | Workflow ID to execute |
 
 **Request:**
 ```bash
-curl -s -X POST http://localhost:3001/api/v1/executions \
-  -H "x-api-key: $CLAWFY_API_KEY" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "workflowId": "wf_abc123",
-    "input": {
-      "1": "A beautiful sunset over mountains"
-    },
-    "priority": "normal"
-  }'
+curl -s -X POST http://localhost:3001/api/workflows/wf_abc123/execute \
+  -H "x-api-key: $CLAWFY_API_KEY"
 ```
 
 **Response:**
 ```json
 {
-  "executionId": "exec_xyz789",
-  "websocketUrl": "ws://localhost:3001/ws?executionId=exec_xyz789",
-  "execution": {
-    "id": "exec_xyz789",
-    "workflowId": "wf_abc123",
-    "status": "queued",
-    "queuedAt": "2026-04-10T12:05:00.000Z"
-  }
+  "executionId": "D8IaCuxM2feVFl2GRXTZW",
+  "status": "queued",
+  "priority": 2,
+  "websocketUrl": "ws://localhost:3001/ws?executionId=D8IaCuxM2feVFl2GRXTZW"
 }
 ```
 
 **Important fields:**
-- `executionId` — use this for polling status
+- `executionId` — use this for polling status (GET /api/executions/:id)
 - `websocketUrl` — optional WebSocket for real-time updates (see WebSocket section)
+- `priority` — execution priority (0=low, 1=normal, 2=high)
+
+**Optional body params** (JSON body):
+| Field | Type | Description |
+|-------|------|-------------|
+| `seed` | number | Random seed for reproducibility |
+| `priority` | string | `high`, `normal`, or `low` |
+| `quantization` | string | `fp32`, `fp16`, `int8`, `int4` |
+| `vramBudget` | number | VRAM budget in MB |
 
 ---
 
 ## 6. Get Execution Status
 
-### GET /api/v1/executions/:id
+### GET /api/executions/:id
 
 Poll for execution status. Do this every 5 seconds until terminal state.
 
@@ -213,7 +208,7 @@ Poll for execution status. Do this every 5 seconds until terminal state.
 
 **Request:**
 ```bash
-curl -s http://localhost:3001/api/v1/executions/exec_xyz789 \
+curl -s http://localhost:3001/api/executions/exec_xyz789 \
   -H "x-api-key: $CLAWFY_API_KEY"
 ```
 
@@ -264,7 +259,7 @@ curl -s http://localhost:3001/api/v1/executions/exec_xyz789 \
 
 ## 7. Cancel Execution
 
-### POST /api/v1/executions/:id/cancel
+### POST /api/executions/:id/cancel
 
 Cancel a running or queued execution.
 
@@ -275,7 +270,7 @@ Cancel a running or queued execution.
 
 **Request:**
 ```bash
-curl -s -X POST http://localhost:3001/api/v1/executions/exec_xyz789/cancel \
+curl -s -X POST http://localhost:3001/api/executions/exec_xyz789/cancel \
   -H "x-api-key: $CLAWFY_API_KEY"
 ```
 
@@ -292,7 +287,7 @@ curl -s -X POST http://localhost:3001/api/v1/executions/exec_xyz789/cancel \
 
 ## 8. List Templates
 
-### GET /api/v1/templates
+### GET /api/templates
 
 Get available workflow templates.
 
@@ -304,7 +299,7 @@ Get available workflow templates.
 
 **Request:**
 ```bash
-curl -s "http://localhost:3001/api/v1/templates?category=ecommerce" \
+curl -s "http://localhost:3001/api/templates?category=ecommerce" \
   -H "x-api-key: $CLAWFY_API_KEY"
 ```
 
@@ -328,7 +323,7 @@ curl -s "http://localhost:3001/api/v1/templates?category=ecommerce" \
 
 ## 9. Estimate Cost
 
-### POST /api/v1/cost
+### POST /api/cost
 
 Estimate the cost of running a workflow before executing.
 
@@ -339,7 +334,7 @@ Estimate the cost of running a workflow before executing.
 
 **Request:**
 ```bash
-curl -s -X POST http://localhost:3001/api/v1/cost \
+curl -s -X POST http://localhost:3001/api/cost \
   -H "x-api-key: $CLAWFY_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{"workflowId": "wf_abc123"}'
@@ -417,13 +412,13 @@ const ws = new WebSocket(wsUrl);
 After executing a workflow, you MUST poll until terminal state:
 
 ```
-1. POST /api/v1/executions → get executionId
+1. POST /api/executions → get executionId
 2. Loop every 5 seconds:
-   GET /api/v1/executions/:id
+   GET /api/executions/:id
 3. Check status:
    - "queued" → continue polling
    - "running" → continue polling
-   - "completed" → GET /api/v1/executions/:id → get outputs
+   - "completed" → GET /api/executions/:id → get outputs
    - "failed" → report error
    - "cancelled" → notify user
 ```

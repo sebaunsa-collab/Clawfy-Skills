@@ -3,7 +3,7 @@
 > Base URL: `$CLAWFY_BASE_URL` (default: `http://localhost:3001`)
 > All requests require: `x-api-key: $CLAWFY_API_KEY`
 > Content-Type: `application/json` for all requests
-> **IMPORTANT:** This API uses `/api/` prefix (not `/api/`)
+> **IMPORTANT:** Esta API usa `/api/` (sin v1 prefix)
 
 ---
 

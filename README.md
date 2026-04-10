@@ -1,153 +1,205 @@
-# Clawfy Skills
+# Clawfy Agent Skills
 
-Agent skill for operating Clawfy workflows via API. Enables listing, executing, monitoring, and retrieving results from Clawfy workflows.
+<div align="center">
 
-## What is this?
+![Clawfy](https://img.shields.io/badge/Clawfy-Skills-00FFC6?style=for-the-badge&logo=github&logoColor=0D1117)
+![Status](https://img.shields.io/badge/Status-Production-7FDBCA?style=for-the-badge)
+![API](https://img.shields.io/badge/API-v1.0.0-00E5FF?style=for-the-badge&logo=cloudflareworkers&logoColor=0D1117)
+![License](https://img.shields.io/badge/License-MIT-A8E6CF?style=for-the-badge)
 
-A **skill** is a set of instructions that helps an AI agent (like Claude, Codex, or OpenClaw) operate the Clawfy API correctly. It contains documentation, best practices, and step-by-step scenarios.
+**Skills para que agentes AI operen Clawfy via API.**
 
-## Installation
+Workflows de generación de imagen, video y audio — controlados por agentes autonomous.
 
-### Via GitHub (recommended)
-
-```bash
-npx skills add clawfy/clawfy-skills
-```
-
-Or for a specific agent:
-```bash
-npx skills add clawfy/clawfy-skills -a your-agent-name
-```
-
-### Via OpenClaw / ClawHub
-
-```bash
-openclaw skills install clawfy-workflow-execution
-clawhub install clawfy-workflow-execution
-```
-
-### Manual Installation
-
-Clone or copy this repository to your agent's skills directory:
-```
-~/.openclaw/skills/clawfy-skills/
-```
-
-## Configuration
-
-Set up your Clawfy credentials as environment variables:
-
-```bash
-# Required
-export CLAWFY_API_KEY="your-api-key"
-
-# Optional (defaults to http://localhost:3001)
-export CLAWFY_BASE_URL="http://localhost:3001"
-```
-
-**Getting an API key:**
-1. Open Clawfy Web (http://localhost:3000)
-2. Go to **Settings → API Keys**
-3. Create a new key
-
-## Directory Structure
-
-```
-clawfy-skills/
-├── SKILL.md                      # Entry point — read this first
-└── rules/
-    ├── api-workflows.md          # Complete API reference
-    ├── best-practices.md          # Security and error handling
-    └── scenarios/
-        ├── scenario-list-workflows.md
-        └── scenario-execute-workflow.md
-```
-
-## Quick Start
-
-After installation, the agent can:
-
-- **List workflows**: "show my workflows"
-- **Execute workflows**: "run the product photo workflow"
-- **Monitor progress**: automatic polling until completion
-- **Get results**: deliver generated media directly
-
-## Usage Example
-
-```
-User: Generate a product photo using the ecommerce workflow
-
-Agent: I'll help you run the ecommerce workflow.
-
-First, let me see what workflows are available...
-
-📋 Your Workflows
-
-1. **Product Photography** (active)
-2. **Social Media Generator** (draft)
-3. **Email Header Maker** (active)
-
-Which would you like to run?
-
-User: 1
-
-Agent: For "Product Photography", I need a few inputs:
-
-1. **Product description**: What should appear?
-2. **Aspect ratio**: 1:1, 16:9, or 9:16?
-3. **Style**: natural, studio, or dramatic?
-
-User: "golden necklace", "1:1", "studio"
-
-Agent: ✅ Executing! Tracking progress...
-
-Status: queued → running → completed
-
-✅ Generated successfully!
-
-[IMAGE DISPLAYED DIRECTLY]
-
-Cost: $0.025
-```
-
-## Requirements
-
-- Clawfy API running (local or remote)
-- Valid API key
-
-## Topics Covered
-
-### API Reference (`rules/api-workflows.md`)
-
-All 10 endpoints documented:
-- Health check
-- List / get workflows
-- Create workflows
-- Execute / cancel / poll executions
-- List templates
-- Estimate cost
-- WebSocket real-time updates
-
-### Best Practices (`rules/best-practices.md`)
-
-- Security rules (never expose API keys)
-- Error handling (401, 404, 422, 429, 500)
-- Polling tips (frequency, timeouts)
-- Rate limiting
-- WebSocket vs polling
-
-### Scenarios (`rules/scenarios/`)
-
-Step-by-step guides for common tasks:
-- List workflows and let user choose
-- Execute and monitor workflow to completion
-
-## About
-
-- **Version**: 1.0.0
-- **Maintained by**: Clawfy team
-- **License**: MIT
+</div>
 
 ---
 
-For questions or issues, contact the Clawfy team or open an issue on GitHub.
+## ¿Qué es esto?
+
+Un package de **skills markdown-based** que permite a cualquier agente AI compatible con el formato (OpenClaw, Claude Code, Codex, etc.) conectarse a la API de Clawfy y ejecutar workflows de manera autonomous.
+
+Los archivos `SKILL.md` son consumidos por el runtime del agente para entender:
+- Qué triggers activan la skill
+- Cómo autenticar contra la API
+- Cuáles endpoints usar y en qué orden
+- Cómo manejar errores y presentar resultados
+
+**No es código ejecutable** — es documentación estructurada que el agente interpreta y sigue.
+
+---
+
+## Estructura del repo
+
+```
+Clawfy-Skills/
+├── SKILL.md                          ← Entry point (lo que lee el agente)
+├── README.md                         ← Este archivo
+└── rules/
+    ├── api-workflows.md               ← Referencia completa de endpoints
+    ├── best-practices.md             ← Seguridad, errores, rate limits
+    └── scenarios/
+        ├── scenario-list-workflows.md ← Guide: listar workflows
+        └── scenario-execute-workflow.md ← Guide: ejecutar y monitorear
+```
+
+---
+
+## Quick Start
+
+### 1. Configurar credenciales
+
+```bash
+export CLAWFY_API_KEY="tu-api-key"
+export CLAWFY_BASE_URL="http://localhost:3001"  # default
+```
+
+### 2. Identificar triggers
+
+La skill se activa cuando el usuario dice algo como:
+
+| Español | English |
+|----------|---------|
+| ejecutar workflow | execute workflow |
+| generar imagen | generate image |
+| automatizacion | automation |
+| estudio de workflows | workflow studio |
+| ejecutar DAG | run DAG |
+| producir video | create video |
+
+### 3. El agente sigue el protocolo
+
+```
+POST /api/v1/executions          → obtener executionId
+↓
+GET /api/v1/executions/:id       → poll cada 5s
+↓
+status = completed?              → presentar resultados
+status = failed?                 → reportar error
+```
+
+---
+
+## Skills disponibles
+
+### `clawfy-workflow-execution`
+
+**Entry point:** `SKILL.md`
+
+Activa cuando el usuario quiere listar, ejecutar, monitorear u obtener resultados de workflows.
+
+**Capabilities:**
+- Listar todos los workflows del usuario
+- Ver detalles y estructura (graph DSL) de un workflow
+- Crear y ejecutar workflows
+- Monitorear ejecución en tiempo real (WebSocket o polling)
+- Cancelar ejecuciones
+- Estimar costos antes de ejecutar
+
+**Node types soportados:**
+
+```
+TEXT_PROMPT    →  Input de texto
+IMAGE_GEN      →  Generación de imagen (MiniMax)
+VIDEO_GEN      →  Generación de video (Kling/Veo)
+AUDIO_GEN      →  Generación de audio (ElevenLabs)
+PASSTHROUGH    →  Paso de datos sin transformación
+OUTPUT         →  Output final
+```
+
+---
+
+## Seguridad
+
+⚠️ **Repo público — nunca exponer credenciales.**
+
+- API key via variable de entorno `$CLAWFY_API_KEY`, nunca hardcodeada
+- WebSocket auth via query param `?apiKey=` (no en headers ni body)
+- Errores 500: nunca mostrar stack traces al usuario
+- Validar tamaño de inputs antes de enviar
+
+Ver: [rules/best-practices.md](rules/best-practices.md) — sección Security Rules.
+
+---
+
+## API Reference
+
+### Base URL
+```
+http://localhost:3001  # desarrollo
+https://api.clawfy.com # producción (usar HTTPS)
+```
+
+### Auth
+```
+x-api-key: $CLAWFY_API_KEY
+```
+
+### Endpoints principales
+
+| Método | Endpoint | Descripción |
+|--------|----------|-------------|
+| `GET` | `/api/v1/health` | Health check |
+| `GET` | `/api/v1/workflows` | Listar workflows |
+| `GET` | `/api/v1/workflows/:id` | Detalle de workflow |
+| `POST` | `/api/v1/workflows` | Crear workflow |
+| `POST` | `/api/v1/executions` | Ejecutar workflow |
+| `GET` | `/api/v1/executions/:id` | Estado de ejecución |
+| `POST` | `/api/v1/executions/:id/cancel` | Cancelar |
+| `GET` | `/api/v1/templates` | Listar templates |
+| `POST` | `/api/v1/cost` | Estimar costo |
+
+---
+
+## Ejemplo de uso
+
+```
+User: "Quiero generar una imagen de un atardecer usando Clawfy"
+
+Agent: Detecta trigger → activa skill → ejecuta:
+
+1. GET /api/v1/workflows
+   → Lista workflows disponibles
+
+2. POST /api/v1/executions
+   → { workflowId: "wf_xxx", input: { "1": "sunset" } }
+   → { executionId: "exec_xyz789", websocketUrl: "..." }
+
+3. Polling (cada 5s):
+   GET /api/v1/executions/exec_xyz789
+   → status: "running" | "completed" | "failed"
+
+4. Si completed:
+   → Presenta imagen directamente al usuario
+   → Incluya resumen + link de descarga
+```
+
+---
+
+## Deploy a ClawHub (opcional)
+
+Para distribución directa a agentes OpenClaw:
+
+```bash
+cd Clawfy-Skills
+clawhub login --token clh_tu_token
+clawhub package publish . --dry-run  # test
+clawhub package publish .             # publicar
+```
+
+---
+
+## Referencias
+
+- [OpenCreator Skills](https://github.com/OpenCreator-ai/opencreator-skills)
+- [Remotion Skills](https://github.com/remotion-dev/remotion)
+- [ClawHub CLI](https://github.com/openclaw/clawhub)
+- Docs de API: [rules/api-workflows.md](rules/api-workflows.md)
+
+---
+
+<div align="center">
+
+`#FF0055` · `00E5FF` · `00FFC6`
+
+</div>

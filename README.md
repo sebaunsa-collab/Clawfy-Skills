@@ -70,9 +70,9 @@ La skill se activa cuando el usuario dice algo como:
 ### 3. El agente sigue el protocolo
 
 ```
-POST /api/v1/executions          → obtener executionId
+POST /api/workflows/{id}/execute → obtener executionId
 ↓
-GET /api/v1/executions/:id       → poll cada 5s
+GET /api/executions/:id          → poll cada 5s
 ↓
 status = completed?              → presentar resultados
 status = failed?                 → reportar error
@@ -139,15 +139,15 @@ x-api-key: $CLAWFY_API_KEY
 
 | Método | Endpoint | Descripción |
 |--------|----------|-------------|
-| `GET` | `/api/v1/health` | Health check |
-| `GET` | `/api/v1/workflows` | Listar workflows |
-| `GET` | `/api/v1/workflows/:id` | Detalle de workflow |
-| `POST` | `/api/v1/workflows` | Crear workflow |
-| `POST` | `/api/v1/executions` | Ejecutar workflow |
-| `GET` | `/api/v1/executions/:id` | Estado de ejecución |
-| `POST` | `/api/v1/executions/:id/cancel` | Cancelar |
-| `GET` | `/api/v1/templates` | Listar templates |
-| `POST` | `/api/v1/cost` | Estimar costo |
+| `GET` | `/api/health` | Health check |
+| `GET` | `/api/workflows` | Listar workflows |
+| `GET` | `/api/workflows/:id` | Detalle de workflow |
+| `POST` | `/api/workflows` | Crear workflow |
+| `POST` | `/api/executions` | Ejecutar workflow |
+| `GET` | `/api/executions/:id` | Estado de ejecución |
+| `POST` | `/api/executions/:id/cancel` | Cancelar |
+| `GET` | `/api/templates` | Listar templates |
+| `POST` | `/api/cost` | Estimar costo |
 
 ---
 
@@ -158,15 +158,15 @@ User: "Quiero generar una imagen de un atardecer usando Clawfy"
 
 Agent: Detecta trigger → activa skill → ejecuta:
 
-1. GET /api/v1/workflows
+1. GET /api/workflows
    → Lista workflows disponibles
 
-2. POST /api/v1/executions
+2. POST /api/executions
    → { workflowId: "wf_xxx", input: { "1": "sunset" } }
    → { executionId: "exec_xyz789", websocketUrl: "..." }
 
 3. Polling (cada 5s):
-   GET /api/v1/executions/exec_xyz789
+   GET /api/executions/exec_xyz789
    → status: "running" | "completed" | "failed"
 
 4. Si completed:

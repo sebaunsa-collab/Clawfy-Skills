@@ -49,7 +49,7 @@ When `CLAWFY_BASE_URL` points to a production server, always use HTTPS:
 **Cause:** Workflow or execution ID does not exist.
 
 **Action:**
-1. List workflows to confirm the ID exists: `GET /api/v1/workflows`
+1. List workflows to confirm the ID exists: `GET /api/workflows`
 2. Check if the execution has already completed or been cancelled
 3. Verify the ID is correct (no typos)
 
@@ -149,7 +149,7 @@ Fetching results... Done!
 
 If status stays `queued` for more than 5 minutes:
 1. Check if the workflow inputs are correct
-2. Verify the API is healthy with `/api/v1/health`
+2. Verify the API is healthy with `/api/health`
 3. Consider cancelling and retrying
 
 ---
@@ -180,14 +180,14 @@ Ask the user only for essential inputs. Use sensible defaults where possible, bu
 ### Present workflow options
 
 When the user asks to "run a workflow":
-1. First list available workflows: `GET /api/v1/workflows`
+1. First list available workflows: `GET /api/workflows`
 2. Present the top 5 most relevant options
 3. Let the user choose before executing
 
 ### Always estimate cost first
 
 Before running a potentially expensive workflow (video, multi-step):
-1. Call `POST /api/v1/cost` with the `workflowId`
+1. Call `POST /api/cost` with the `workflowId`
 2. Inform the user of the estimated cost
 3. Proceed only after confirmation
 
@@ -263,14 +263,14 @@ ws.onerror = () => {
 
 ```bash
 # 1. Verify API is up
-curl http://localhost:3001/api/v1/health
+curl http://localhost:3001/api/health
 
 # 2. List workflows
-curl http://localhost:3001/api/v1/workflows \
+curl http://localhost:3001/api/workflows \
   -H "x-api-key: $CLAWFY_API_KEY"
 
 # 3. Execute a simple workflow (if you have one)
-curl -X POST http://localhost:3001/api/v1/executions \
+curl -X POST http://localhost:3001/api/executions \
   -H "x-api-key: $CLAWFY_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{"workflowId": "wf_your_id"}'
@@ -280,7 +280,7 @@ curl -X POST http://localhost:3001/api/v1/executions \
 
 ```bash
 # If this returns 401, your API key is invalid
-curl http://localhost:3001/api/v1/health \
+curl http://localhost:3001/api/health \
   -H "x-api-key: $CLAWFY_API_KEY"
 ```
 

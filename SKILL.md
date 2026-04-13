@@ -77,31 +77,44 @@ WORKFLOW my_pipeline
   STEP.3.OUTPUT type=image input=2
 ```
 
-**Dynamic variables:** Use `{{varName}}` or `${varName}` placeholders in DSL, then pass `variables` at execution time to iterate without creating new workflows:
+**Dynamic variables:** Use `{{varName}}` or `${varName}` placeholders in DSL, then pass `variables` at execution time:
 
 ```
 WORKFLOW refine_image
   STEP.1.TEXT_PROMPT prompt={{prompt}}
-  STEP.2.IMAGE_GEN model=minimax prompt=${prompt} aspect_ratio=${aspect_ratio}
+  STEP.2.SAMPLER prompt=${prompt} denoise=0.7 init_image=${prev_image} aspect_ratio=${aspect_ratio}
   STEP.3.OUTPUT type=image input=2
 ```
 
-### Execution Flow
-
-1. **Create execution** → returns `executionId` and `websocketUrl`
-2. **Poll status** → until terminal state (completed/failed/cancelled)
-3. **Get results** → retrieve outputs when completed
+Execute with: `{ "variables": { "prompt": "sunset over Tokyo", "prev_image": "https://...", "aspect_ratio": "16:9" } }`
 
 ### Node Types
 
 | Node Type | Purpose |
 |-----------|---------|
 | `TEXT_PROMPT` | Text input |
-| `IMAGE_GEN` | Image generation (MiniMax production) |
+| `SAMPLER` | Unified image generation (txt2img, img2img, inpaint) — **preferred over IMAGE_GEN** |
+| `IMAGE_GEN` | Image generation (txt2img) — backward compatible wrapper around SAMPLER |
+| `IMAGE_EDIT` | Image editing (img2img) — backward compatible wrapper |
+| `UPSCALE` | Resolution upscaling — backward compatible wrapper |
+| `STYLE_TRANSFER` | Style transfer — backward compatible wrapper |
 | `VIDEO_GEN` | Video generation (Kling/Veo stubs) |
 | `AUDIO_GEN` | Audio generation (ElevenLabs stub) |
 | `PASSTHROUGH` | Data passthrough |
 | `OUTPUT` | Final output |
+
+### SAMPLER — Unified Image Node
+
+SAMPLER handles all image generation types. Parameters determine behavior:
+
+| Parameters | Operation |
+|-----------|-----------|
+| `denoise=1.0`, no `init_image` | **txt2img** — generate from noise |
+| `denoise<1.0` + `init_image` | **img2img** — transform existing image |
+| `mask` + `init_image` | **inpaint** — regenerate masked regions only |
+| `denoise=0` + `init_image` | **passthrough** — return image unchanged |
+
+Key parameters: `prompt`, `init_image`, `denoise` (0.0-1.0), `mask`, `steps`, `cfg`, `seed`, `model`
 
 ### Execution States
 

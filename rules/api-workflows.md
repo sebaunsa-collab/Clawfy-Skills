@@ -225,6 +225,111 @@ Execute with `variables: { "prompt": "...", "aspect_ratio": "16:9" }` — the pl
 
 ---
 
+## 5b. SAMPLER Node — Unified Image Generation
+
+The `SAMPLER` node is a unified node that handles all image generation types (txt2img, img2img, inpaint, upscale). IMAGE_GEN, IMAGE_EDIT, UPSCALE, and STYLE_TRANSFER are backward-compatible wrappers around SAMPLER.
+
+### SAMPLER Parameters:
+
+| Parameter | Type | Default | Description |
+|-----------|------|---------|-------------|
+| `model` | string | `minimax` | Provider model: `minimax`, `replicate` |
+| `prompt` | string | — | **Required.** Text prompt |
+| `negative` | string | — | Negative prompt |
+| `init_image` | string | — | URL of image to transform (img2img/inpaint) |
+| `denoise` | number | `1.0` | 0.0-1.0, strength of transformation |
+| `mask` | string | — | URL of mask image (white=keep, black=regenerate) for inpaint |
+| `steps` | number | — | Denoising steps |
+| `cfg` | number | — | Guidance scale |
+| `seed` | number | — | Random seed |
+| `aspect_ratio` | string | `1:1` | `1:1`, `16:9`, `9:16`, `3:2`, `2:3` |
+
+### Operation Routing:
+
+| Parameters | Operation |
+|-----------|-----------|
+| `denoise=1.0`, no `init_image` | **txt2img** — generate from pure noise |
+| `denoise<1.0` + `init_image` | **img2img** — transform existing image |
+| `mask` + `init_image` | **inpaint** — regenerate masked regions only |
+| `denoise=0` + `init_image` | **passthrough** — return init_image unchanged |
+
+### DSL Examples:
+
+```bash
+# txt2img (generate from scratch)
+WORKFLOW generate
+  STEP.1.SAMPLER prompt="a red car" denoise=1.0 model=minimax
+  STEP.2.OUTPUT type=image input=1
+
+# img2img (transform existing image)
+WORKFLOW refine
+  STEP.1.SAMPLER prompt="more vibrant colors" denoise=0.7 init_image="${last.1.image_url}" model=minimax
+  STEP.2.OUTPUT type=image input=1
+
+# inpaint (edit specific regions)
+WORKFLOW inpaint_face
+  STEP.1.SAMPLER prompt="blue eyes" denoise=0.8 init_image="${last.1.image_url}" mask="https://example.com/mask.png" model=replicate
+  STEP.2.OUTPUT type=image input=1
+```
+
+### Backward Compatibility:
+
+IMAGE_GEN, IMAGE_EDIT, UPSCALE, and STYLE_TRANSFER still work exactly as before — they are SAMPLER with different defaults:
+
+- `IMAGE_GEN` = SAMPLER with `denoise=1.0` (txt2img)
+- `IMAGE_EDIT` = SAMPLER with `denoise=0.7` (img2img)
+- `UPSCALE` = SAMPLER with `denoise=0` (passthrough)
+- `STYLE_TRANSFER` = SAMPLER with `denoise=0.8`
+
+---
+
+## 5c. Execution History DSL — Reference Previous Executions
+
+Use the `executionHistory` DSL patterns to reference outputs from previous workflow executions:
+
+### History Patterns:
+
+| Pattern | Description |
+|---------|-------------|
+| `${last.nodeId.field}` | Last execution's node output (shorthand) |
+| `${history[-1].nodeId.field}` | Last execution (explicit) |
+| `${history[-2].nodeId.field}` | Second-to-last execution |
+| `${history[-n].nodeId.field}` | Nth-from-last execution |
+| `${exec.EXEC_ID.nodeId.field}` | Specific execution by ID |
+
+### Examples:
+
+```bash
+# Use image from last execution
+init_image="${last.2.image_url}"
+
+# Use image from 2 executions ago
+init_image="${history[-2].2.image_url}"
+
+# Reference a specific execution
+init_image="${exec.kUxmsRvf-_h7YC3q3fLZg.2.image_url}"
+```
+
+### How It Works:
+
+- The system fetches the last 10 completed executions for this workflow
+- `history[-1]` is the most recent, `history[-2]` is one before that, etc.
+- If the referenced execution or node doesn't exist, the placeholder is left unchanged (no crash)
+- Available after at least one successful execution
+
+### Combined with Variables:
+
+```bash
+# Reference last execution AND use variables
+STEP.1.SAMPLER prompt="{{prompt}}" denoise=0.7 init_image="${history[-1].2.image_url}" model=minimax
+```
+
+Execute with: `{ "variables": { "prompt": "add sunset colors" } }`
+
+---
+
+## 6. Get Execution Status
+
 ## 6. Get Execution Status
 
 ### GET /api/executions/:id

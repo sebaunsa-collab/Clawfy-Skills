@@ -77,6 +77,15 @@ WORKFLOW my_pipeline
   STEP.3.OUTPUT type=image input=2
 ```
 
+**Dynamic variables:** Use `{{varName}}` or `${varName}` placeholders in DSL, then pass `variables` at execution time to iterate without creating new workflows:
+
+```
+WORKFLOW refine_image
+  STEP.1.TEXT_PROMPT prompt={{prompt}}
+  STEP.2.IMAGE_GEN model=minimax prompt=${prompt} aspect_ratio=${aspect_ratio}
+  STEP.3.OUTPUT type=image input=2
+```
+
 ### Execution Flow
 
 1. **Create execution** → returns `executionId` and `websocketUrl`

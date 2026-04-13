@@ -192,6 +192,36 @@ curl -s -X POST http://localhost:3001/api/workflows/wf_abc123/execute \
 | `priority` | string | `high`, `normal`, or `low` |
 | `quantization` | string | `fp32`, `fp16`, `int8`, `int4` |
 | `vramBudget` | number | VRAM budget in MB |
+| `variables` | object | Record<string, string> — replaces `{{var}}` or `${var}` placeholders in DSL at execution time |
+
+**Variables — Iterative Refinement:**
+
+Use `variables` to pass dynamic values at execution time. This lets you reuse the same workflow for different inputs without creating new workflows:
+
+```bash
+# Workflow with {{prompt}} placeholder in DSL
+# Execute with different variable values to refine results
+curl -s -X POST http://localhost:3001/api/workflows/wf_abc123/execute \
+  -H "x-api-key: $CLAWFY_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "variables": {
+      "prompt": "sunset over Tokyo with warm orange colors",
+      "aspect_ratio": "16:9"
+    }
+  }'
+```
+
+The DSL can use both `{{varName}}` and `${varName}` syntax:
+
+```
+WORKFLOW refine_image
+  STEP.1.TEXT_PROMPT prompt={{prompt}}
+  STEP.2.IMAGE_GEN model=minimax prompt=${prompt} aspect_ratio=${aspect_ratio}
+  STEP.3.OUTPUT type=image input=2
+```
+
+Execute with `variables: { "prompt": "...", "aspect_ratio": "16:9" }` — the placeholders get replaced at runtime. Re-execute with different variables to iterate without creating new workflows.
 
 ---
 

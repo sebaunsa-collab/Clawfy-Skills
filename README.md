@@ -86,7 +86,7 @@ status = failed?                 → reportar error
 
 **Entry point:** `SKILL.md`
 
-Activa cuando el usuario quiere listar, ejecutar, monitorear u obtener resultados de workflows.
+Activa cuando el usuario quiere listar, ejecutar, monitorear u obtener resultados de workflows, o definir identidades de marca (Style Systems).
 
 **Capabilities:**
 - Listar todos los workflows del usuario
@@ -95,6 +95,8 @@ Activa cuando el usuario quiere listar, ejecutar, monitorear u obtener resultado
 - Monitorear ejecución en tiempo real (WebSocket o polling)
 - Cancelar ejecuciones
 - Estimar costos antes de ejecutar
+- **Gestionar Style Systems** — definir marca, colores, tipografía, mood, presets
+- Listar, crear, actualizar y eliminar Style Systems
 
 **Node types soportados:**
 
@@ -105,6 +107,12 @@ VIDEO_GEN      →  Generación de video (Kling/Veo)
 AUDIO_GEN      →  Generación de audio (ElevenLabs)
 PASSTHROUGH    →  Paso de datos sin transformación
 OUTPUT         →  Output final
+```
+
+**Style System features:**
+
+```
+Style Systems  →  Brand identity (colors, typography, logo, mood, presets)
 ```
 
 ---
@@ -148,6 +156,16 @@ x-api-key: $CLAWFY_API_KEY
 | `POST` | `/api/executions/:id/cancel` | Cancelar |
 | `GET` | `/api/templates` | Listar templates |
 | `POST` | `/api/cost` | Estimar costo |
+
+### Style Systems (Brand Identity)
+
+| Método | Endpoint | Descripción |
+|--------|----------|-------------|
+| `GET` | `/api/style-systems` | Listar todos los Style Systems |
+| `GET` | `/api/style-systems/:id` | Detalle de un Style System |
+| `POST` | `/api/style-systems` | Crear Style System |
+| `PUT` | `/api/style-systems/:id` | Actualizar Style System |
+| `DELETE` | `/api/style-systems/:id` | Eliminar Style System |
 
 ---
 

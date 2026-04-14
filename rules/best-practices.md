@@ -299,3 +299,29 @@ curl http://localhost:3001/api/health \
 | Sending API key via WebSocket message instead of query param | Use `?apiKey=` in the connection URL |
 | Exposing 500 error stack traces to users | Show generic message, log details server-side |
 | Sending oversized payloads | Validate size before sending |
+---
+
+## Style System Guidelines
+
+When managing Style Systems:
+
+| Guideline | Why |
+|-----------|-----|
+| Show current values before asking for updates | Prevents accidental overwrites |
+| Partial creation is fine | Only `name` is required — everything else can be `null` |
+| Colors are the most important field | If user only provides one thing, get the primary color |
+| Confirm before delete | Style System deletion is permanent and irreversible |
+| Validate hex color format | Colors must be valid hex (e.g. `#FF0055`) |
+| Presets are shortcuts | If user is unsure, a preset gets 80% of the way there |
+| Warn before deleting a used Style System | Workflows depending on it may produce unexpected output |
+
+### Style System Error Handling
+
+| Situation | Response |
+|-----------|----------|
+| Style System not found (404) | `"{ error": "Style system not found" }` |
+| Validation failed (400/422) | `"{ error": "Invalid request body", "details": [...] }` |
+| Ownership violation (404) | `"{ error": "Style system not found" }` — same response, no distinction |
+
+> **Note:** The API returns plain `error` strings. There are no structured error codes like `STYLE_SYSTEM_NOT_FOUND` or `VALIDATION_ERROR`. Always check the `error` field in the response body.
+

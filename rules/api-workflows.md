@@ -602,3 +602,12 @@ Download: https://cdn.clawfy.io/outputs/img_001.png
 | 422 | `VALIDATION_ERROR` | Request validates but is semantically wrong |
 | 429 | `RATE_LIMITED` | Too many requests, wait and retry |
 | 500 | `INTERNAL_ERROR` | Server error, try again later |
+
+---
+
+## Style Systems (Brand Identity)
+
+For managing brand identities — colors, typography, logo, mood, and style presets — see:
+
+**[rules/style-systems.md](style-systems.md)** — Complete Style System API reference
+

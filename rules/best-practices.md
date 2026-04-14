@@ -317,8 +317,11 @@ When managing Style Systems:
 
 ### Style System Error Handling
 
-| Error | Response |
-|-------|----------|
-| 404 STYLE_SYSTEM_NOT_FOUND | "No encontré ese Style System. Verificá el ID o listá tus Style Systems." |
-| 422 VALIDATION_ERROR | "El campo [nombre] no es válido. [detalle]" |
+| Situation | Response |
+|-----------|----------|
+| Style System not found (404) | `"{ error": "Style system not found" }` |
+| Validation failed (400/422) | `"{ error": "Invalid request body", "details": [...] }` |
+| Ownership violation (404) | `"{ error": "Style system not found" }` — same response, no distinction |
+
+> **Note:** The API returns plain `error` strings. There are no structured error codes like `STYLE_SYSTEM_NOT_FOUND` or `VALIDATION_ERROR`. Always check the `error` field in the response body.
 

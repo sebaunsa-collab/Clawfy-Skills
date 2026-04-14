@@ -22,40 +22,45 @@ curl -s http://localhost:3001/api/style-systems \
 
 **Response:**
 ```json
-[
-  {
-    "id": "ss_abc123",
-    "name": "Mercury Hub Brand Style",
-    "brandName": "Mercury Hub",
-    "industry": "tech",
-    "colors": {
-      "primary": "#1A7F37",
-      "secondary": "#2D3748",
-      "accent": "#38A169",
-      "background": "#FFFFFF",
-      "text": "#1A202C"
-    },
-    "typography": {
-      "headlineFont": "Inter",
-      "headlineWeight": "Bold",
-      "bodyFont": "Inter",
-      "bodyWeight": "Regular"
-    },
-    "logo": {
-      "url": "https://example.com/logo.png",
-      "position": "bottom_right",
-      "maxWidth": "80px"
-    },
-    "layoutPreference": "product_hero",
-    "mood": "premium",
-    "stylePreset": "clean_tech",
-    "customInstructions": "Use product photography with soft studio lighting",
-    "examples": ["https://example.com/ref1.jpg"],
-    "createdAt": "2026-04-01T10:00:00.000Z",
-    "updatedAt": "2026-04-05T15:30:00.000Z"
-  }
-]
+{
+  "styleSystems": [
+    {
+      "id": "LEF32mo3L3uCodboHq9o",
+      "userId": "user_xxx",
+      "name": "Mercury Hub Brand Style",
+      "brandName": "Mercury Hub",
+      "industry": "tech",
+      "colors": {
+        "primary": "#1A7F37",
+        "secondary": "#2D3748",
+        "accent": "#38A169",
+        "background": "#FFFFFF",
+        "text": "#1A202C"
+      },
+      "typography": {
+        "headlineFont": "Inter",
+        "headlineWeight": "Bold",
+        "bodyFont": "Inter",
+        "bodyWeight": "Regular"
+      },
+      "logo": {
+        "url": "https://example.com/logo.png",
+        "position": "bottom_right",
+        "maxWidth": "80px"
+      },
+      "layoutPreference": "product_hero",
+      "mood": "premium",
+      "stylePreset": "clean_tech",
+      "customInstructions": "Use product photography with soft studio lighting",
+      "examples": ["https://example.com/ref1.jpg"],
+      "createdAt": "2026-04-01T10:00:00.000Z",
+      "updatedAt": "2026-04-05T15:30:00.000Z"
+    }
+  ]
+}
 ```
+
+> **Note:** IDs are generated via [nanoid](https://github.com/adioss/nanoid) — 21-character alphanumeric strings (e.g., `LEF32mo3L3uCodboHq9o`).
 
 ---
 
@@ -67,11 +72,39 @@ Get a specific Style System by ID.
 
 **Request:**
 ```bash
-curl -s http://localhost:3001/api/style-systems/ss_abc123 \
+curl -s http://localhost:3001/api/style-systems/LEF32mo3L3uCodboHq9o \
   -H "x-api-key: $CLAWFY_API_KEY"
 ```
 
-**Response:** Returns the Style System object, or `null` if not found.
+**Response (200 OK):**
+```json
+{
+  "styleSystem": {
+    "id": "LEF32mo3L3uCodboHq9o",
+    "userId": "user_xxx",
+    "name": "Mercury Hub Brand Style",
+    "brandName": "Mercury Hub",
+    "industry": "tech",
+    "colors": { ... },
+    "typography": { ... },
+    "logo": { ... },
+    "layoutPreference": "product_hero",
+    "mood": "premium",
+    "stylePreset": "clean_tech",
+    "customInstructions": "Use product photography with soft studio lighting",
+    "examples": ["https://example.com/ref1.jpg"],
+    "createdAt": "2026-04-01T10:00:00.000Z",
+    "updatedAt": "2026-04-05T15:30:00.000Z"
+  }
+}
+```
+
+**Error (404 Not Found):**
+```json
+{
+  "error": "Style system not found"
+}
+```
 
 ---
 
@@ -134,7 +167,9 @@ All values are hex color codes (e.g. `#FF0055`).
 
 Position options: `top_left`, `top_right`, `bottom_left`, `bottom_right`, `center`
 
-### stylePreset options
+### stylePreset
+
+Presets are suggested visual families — you can use any string value. Common presets:
 
 | Preset | Description |
 |--------|-------------|
@@ -144,6 +179,8 @@ Position options: `top_left`, `top_right`, `bottom_left`, `bottom_right`, `cente
 | `streetwear` | Bold colors, dynamic angles, high contrast, urban feel |
 | `wellness_natur` | Earth tones, natural lighting, organic layouts |
 | `bold_color` | Vibrant solid backgrounds, strong color blocks, high impact |
+
+> **Note:** `stylePreset` is a **free-form string** — any value is accepted. The presets above are suggestions only; validation is not enforced server-side.
 
 ### Request Example
 
@@ -183,20 +220,23 @@ curl -s -X POST http://localhost:3001/api/style-systems \
 **Response (201 Created):**
 ```json
 {
-  "id": "ss_new456",
-  "name": "Mercury Hub Brand Style",
-  "brandName": "Mercury Hub",
-  "industry": "tech",
-  "colors": { "primary": "#1A7F37", ... },
-  "typography": { "headlineFont": "Inter", ... },
-  "logo": { "url": "https://mercuryhub.com/logo.png", ... },
-  "layoutPreference": "product_hero",
-  "mood": "premium",
-  "stylePreset": "clean_tech",
-  "customInstructions": "Use product photography with soft studio lighting. Avoid cartoon or clipart styles.",
-  "examples": null,
-  "createdAt": "2026-04-14T19:00:00.000Z",
-  "updatedAt": "2026-04-14T19:00:00.000Z"
+  "styleSystem": {
+    "id": "LEF32mo3L3uCodboHq9o",
+    "userId": "user_xxx",
+    "name": "Mercury Hub Brand Style",
+    "brandName": "Mercury Hub",
+    "industry": "tech",
+    "colors": { "primary": "#1A7F37", "secondary": "#2D3748", "accent": "#38A169", "background": "#FFFFFF", "text": "#1A202C" },
+    "typography": { "headlineFont": "Inter", "headlineWeight": "Bold", "bodyFont": "Inter", "bodyWeight": "Regular" },
+    "logo": { "url": "https://mercuryhub.com/logo.png", "position": "bottom_right", "maxWidth": "80px" },
+    "layoutPreference": "product_hero",
+    "mood": "premium",
+    "stylePreset": "clean_tech",
+    "customInstructions": "Use product photography with soft studio lighting. Avoid cartoon or clipart styles.",
+    "examples": null,
+    "createdAt": "2026-04-14T19:00:00.000Z",
+    "updatedAt": "2026-04-14T19:00:00.000Z"
+  }
 }
 ```
 
@@ -215,7 +255,7 @@ Same fields as POST. All fields optional — only provided fields are updated.
 **Request Example: Update mood and colors**
 
 ```bash
-curl -s -X PUT http://localhost:3001/api/style-systems/ss_abc123 \
+curl -s -X PUT http://localhost:3001/api/style-systems/LEF32mo3L3uCodboHq9o \
   -H "x-api-key: $CLAWFY_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{
@@ -230,7 +270,35 @@ curl -s -X PUT http://localhost:3001/api/style-systems/ss_abc123 \
   }'
 ```
 
-**Response:** Returns the updated Style System object.
+**Response (200 OK):**
+```json
+{
+  "styleSystem": {
+    "id": "LEF32mo3L3uCodboHq9o",
+    "userId": "user_xxx",
+    "name": "Mercury Hub Brand Style",
+    "brandName": "Mercury Hub",
+    "industry": "tech",
+    "colors": { "primary": "#FF0055", "secondary": "#1A202C", "accent": "#00E5FF", "background": "#0D1117", "text": "#FFFFFF" },
+    "typography": { "headlineFont": "Inter", "headlineWeight": "Bold", "bodyFont": "Inter", "bodyWeight": "Regular" },
+    "logo": { "url": "https://example.com/logo.png", "position": "bottom_right", "maxWidth": "80px" },
+    "layoutPreference": "product_hero",
+    "mood": "bold",
+    "stylePreset": "clean_tech",
+    "customInstructions": "Use product photography with soft studio lighting",
+    "examples": null,
+    "createdAt": "2026-04-01T10:00:00.000Z",
+    "updatedAt": "2026-04-14T20:00:00.000Z"
+  }
+}
+```
+
+**Error (404 Not Found):**
+```json
+{
+  "error": "Style system not found"
+}
+```
 
 ---
 
@@ -242,14 +310,21 @@ Delete a Style System permanently.
 
 **Request:**
 ```bash
-curl -s -X DELETE http://localhost:3001/api/style-systems/ss_abc123 \
+curl -s -X DELETE http://localhost:3001/api/style-systems/LEF32mo3L3uCodboHq9o \
   -H "x-api-key: $CLAWFY_API_KEY"
 ```
 
-**Response:**
+**Response (200 OK):**
 ```json
 {
   "success": true
+}
+```
+
+**Error (404 Not Found):**
+```json
+{
+  "error": "Style system not found"
 }
 ```
 
@@ -257,16 +332,16 @@ curl -s -X DELETE http://localhost:3001/api/style-systems/ss_abc123 \
 
 ---
 
-## Error Codes
+## Error Responses
 
-| HTTP Status | Error Code | Meaning |
-|-------------|------------|---------|
-| 400 | `INVALID_REQUEST` | Malformed request body |
-| 401 | `UNAUTHORIZED` | Invalid or missing API key |
-| 404 | `STYLE_SYSTEM_NOT_FOUND` | Style System ID does not exist |
-| 422 | `VALIDATION_ERROR` | Request validates but field values are invalid |
-| 429 | `RATE_LIMITED` | Too many requests, wait and retry |
-| 500 | `INTERNAL_ERROR` | Server error, try again later |
+| HTTP Status | Meaning |
+|-------------|---------|
+| 400 | Malformed request body — JSON is invalid |
+| 401 | Invalid or missing API key |
+| 404 | Style System ID does not exist (or belongs to another user) |
+| 422 | Validation failed — check `error` and `details` fields for specifics |
+
+> **Note:** Error responses use plain `error` strings — there are **no structured error codes** like `STYLE_SYSTEM_NOT_FOUND`. The agent should read the `error` field directly.
 
 ---
 

@@ -45,7 +45,7 @@ GET /api/style-systems
 🎨 Your Style Systems
 
 1. **Mercury Hub Brand Style**
-   ID: ss_abc123
+   ID: LEF32mo3L3uCodboHq9o
    Brand: Mercury Hub
    Industry: tech
    Mood: premium
@@ -53,7 +53,7 @@ GET /api/style-systems
    Last updated: 2 days ago
 
 2. **Summer Vibes Campaign**
-   ID: ss_def456
+   ID: 7x9KpL2mN4oPqRsTuVwXyZaBcDeFgHiJk
    Brand: BeachCo
    Industry: lifestyle
    Mood: casual

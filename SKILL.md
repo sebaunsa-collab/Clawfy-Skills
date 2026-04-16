@@ -202,7 +202,7 @@ Agent: "Claro. Necesito los detalles de tu marca:
 7. **Preset** (opcional): ¿Alguna familia visual?
 
 Agent luego hace:
-POST /api/style-systems
+POST /api/v1/style-systems
 {
   "name": "Mercury Hub Brand Style",
   "brandName": "Mercury Hub",

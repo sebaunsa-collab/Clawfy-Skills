@@ -36,7 +36,7 @@ This scenario shows how to list, create, update, and delete Style Systems — an
 **1. Call List Style Systems API**
 
 ```bash
-GET /api/style-systems
+GET /api/v1/style-systems
 ```
 
 **2. Present to user**
@@ -93,7 +93,7 @@ Want to create one? I can guide you through it.
 **2. Create via API**
 
 ```bash
-POST /api/style-systems
+POST /api/v1/style-systems
 ```
 
 **Request body — minimum required:**
@@ -206,7 +206,7 @@ New secondary: [user input]
 **4. Update via API**
 
 ```bash
-PUT /api/style-systems/{id}
+PUT /api/v1/style-systems/{id}
 ```
 
 ```json
@@ -269,7 +269,7 @@ Are you sure? Type "yes" to confirm.
 **3. Delete via API**
 
 ```bash
-DELETE /api/style-systems/{id}
+DELETE /api/v1/style-systems/{id}
 ```
 
 **4. Present result**

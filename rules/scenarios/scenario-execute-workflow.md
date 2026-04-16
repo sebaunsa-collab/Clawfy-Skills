@@ -49,7 +49,7 @@ Which would you like to run?
 After user selects, get full details to understand input nodes:
 
 ```bash
-GET /api/workflows/{workflowId}
+GET /api/v1/workflows/{workflowId}
 ```
 
 Look at the `graph.nodes` to identify required inputs:
@@ -85,7 +85,7 @@ What values would you like?
 Once you have all inputs, execute via the workflow's execute endpoint:
 
 ```bash
-POST /api/workflows/{workflowId}/execute
+POST /api/v1/workflows/{workflowId}/execute
 ```
 
 No body required — the workflow ID is in the URL path.
@@ -117,7 +117,7 @@ Tracking progress...
 Poll every 5 seconds:
 
 ```bash
-GET /api/executions/exec_xyz789
+GET /api/v1/executions/exec_xyz789
 ```
 
 ### Polling Loop
@@ -147,7 +147,7 @@ Status: completed | 100%
 When `status: "completed"`, get the outputs:
 
 ```bash
-GET /api/executions/exec_xyz789
+GET /api/v1/executions/exec_xyz789
 ```
 
 Look at `execution.outputs`:
@@ -196,7 +196,7 @@ Would you like to run another workflow?
 If user asks to cancel during execution:
 
 ```bash
-POST /api/executions/exec_xyz789/cancel
+POST /api/v1/executions/exec_xyz789/cancel
 ```
 
 Response:

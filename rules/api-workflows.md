@@ -3,19 +3,19 @@
 > Base URL: `$CLAWFY_BASE_URL` (default: `http://localhost:3001`)
 > All requests require: `x-api-key: $CLAWFY_API_KEY`
 > Content-Type: `application/json` for all requests
-> **IMPORTANT:** Esta API usa `/api/` (sin v1 prefix)
+> **IMPORTANT:** This API uses `/api/v1/` prefix (NOT `/api/`)
 
 ---
 
 ## 1. Health Check
 
-### GET /api/health
+### GET /api/v1/health
 
 Verify the API is running and healthy.
 
 **Request:**
 ```bash
-curl -s http://localhost:3001/api/health \
+curl -s http://localhost:3001/api/v1/health \
   -H "x-api-key: $CLAWFY_API_KEY"
 ```
 
@@ -33,7 +33,7 @@ curl -s http://localhost:3001/api/health \
 
 ## 2. List Workflows
 
-### GET /api/workflows
+### GET /api/v1/workflows
 
 Returns all workflows for the authenticated user.
 
@@ -45,7 +45,7 @@ Returns all workflows for the authenticated user.
 
 **Request:**
 ```bash
-curl -s "http://localhost:3001/api/workflows?limit=10" \
+curl -s "http://localhost:3001/api/v1/workflows?limit=10" \
   -H "x-api-key: $CLAWFY_API_KEY"
 ```
 
@@ -70,7 +70,7 @@ curl -s "http://localhost:3001/api/workflows?limit=10" \
 
 ## 3. Get Workflow Details
 
-### GET /api/workflows/:id
+### GET /api/v1/workflows/:id
 
 Get full details of a specific workflow including its graph structure.
 
@@ -81,7 +81,7 @@ Get full details of a specific workflow including its graph structure.
 
 **Request:**
 ```bash
-curl -s http://localhost:3001/api/workflows/wf_abc123 \
+curl -s http://localhost:3001/api/v1/workflows/wf_abc123 \
   -H "x-api-key: $CLAWFY_API_KEY"
 ```
 
@@ -115,7 +115,7 @@ curl -s http://localhost:3001/api/workflows/wf_abc123 \
 
 ## 4. Create Workflow
 
-### POST /api/workflows
+### POST /api/v1/workflows
 
 Create a new workflow from DSL string.
 
@@ -128,7 +128,7 @@ Create a new workflow from DSL string.
 
 **Request:**
 ```bash
-curl -s -X POST http://localhost:3001/api/workflows \
+curl -s -X POST http://localhost:3001/api/v1/workflows \
   -H "x-api-key: $CLAWFY_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{
@@ -155,7 +155,7 @@ curl -s -X POST http://localhost:3001/api/workflows \
 
 ## 5. Execute Workflow
 
-### POST /api/workflows/:id/execute
+### POST /api/v1/workflows/:id/execute
 
 Start a workflow execution by workflow ID. Returns immediately with an `executionId` for polling.
 
@@ -166,7 +166,7 @@ Start a workflow execution by workflow ID. Returns immediately with an `executio
 
 **Request:**
 ```bash
-curl -s -X POST http://localhost:3001/api/workflows/wf_abc123/execute \
+curl -s -X POST http://localhost:3001/api/v1/workflows/wf_abc123/execute \
   -H "x-api-key: $CLAWFY_API_KEY"
 ```
 
@@ -181,7 +181,7 @@ curl -s -X POST http://localhost:3001/api/workflows/wf_abc123/execute \
 ```
 
 **Important fields:**
-- `executionId` — use this for polling status (GET /api/executions/:id)
+- `executionId` — use this for polling status (GET /api/v1/executions/:id)
 - `websocketUrl` — optional WebSocket for real-time updates (see WebSocket section)
 - `priority` — execution priority (0=low, 1=normal, 2=high)
 
@@ -193,6 +193,7 @@ curl -s -X POST http://localhost:3001/api/workflows/wf_abc123/execute \
 | `quantization` | string | `fp32`, `fp16`, `int8`, `int4` |
 | `vramBudget` | number | VRAM budget in MB |
 | `variables` | object | Record<string, string> — replaces `{{var}}` or `${var}` placeholders in DSL at execution time |
+| `styleSystemId` | string | Style System ID to enrich prompts with brand identity |
 
 **Variables — Iterative Refinement:**
 
@@ -201,7 +202,7 @@ Use `variables` to pass dynamic values at execution time. This lets you reuse th
 ```bash
 # Workflow with {{prompt}} placeholder in DSL
 # Execute with different variable values to refine results
-curl -s -X POST http://localhost:3001/api/workflows/wf_abc123/execute \
+curl -s -X POST http://localhost:3001/api/v1/workflows/wf_abc123/execute \
   -H "x-api-key: $CLAWFY_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{
@@ -330,9 +331,7 @@ Execute with: `{ "variables": { "prompt": "add sunset colors" } }`
 
 ## 6. Get Execution Status
 
-## 6. Get Execution Status
-
-### GET /api/executions/:id
+### GET /api/v1/executions/:id
 
 Poll for execution status. Do this every 5 seconds until terminal state.
 
@@ -343,7 +342,7 @@ Poll for execution status. Do this every 5 seconds until terminal state.
 
 **Request:**
 ```bash
-curl -s http://localhost:3001/api/executions/exec_xyz789 \
+curl -s http://localhost:3001/api/v1/executions/exec_xyz789 \
   -H "x-api-key: $CLAWFY_API_KEY"
 ```
 
@@ -394,7 +393,7 @@ curl -s http://localhost:3001/api/executions/exec_xyz789 \
 
 ## 7. Cancel Execution
 
-### POST /api/executions/:id/cancel
+### POST /api/v1/executions/:id/cancel
 
 Cancel a running or queued execution.
 
@@ -405,7 +404,7 @@ Cancel a running or queued execution.
 
 **Request:**
 ```bash
-curl -s -X POST http://localhost:3001/api/executions/exec_xyz789/cancel \
+curl -s -X POST http://localhost:3001/api/v1/executions/exec_xyz789/cancel \
   -H "x-api-key: $CLAWFY_API_KEY"
 ```
 
@@ -422,7 +421,7 @@ curl -s -X POST http://localhost:3001/api/executions/exec_xyz789/cancel \
 
 ## 8. List Templates
 
-### GET /api/templates
+### GET /api/v1/templates
 
 Get available workflow templates.
 
@@ -434,7 +433,7 @@ Get available workflow templates.
 
 **Request:**
 ```bash
-curl -s "http://localhost:3001/api/templates?category=ecommerce" \
+curl -s "http://localhost:3001/api/v1/templates?category=ecommerce" \
   -H "x-api-key: $CLAWFY_API_KEY"
 ```
 
@@ -456,9 +455,92 @@ curl -s "http://localhost:3001/api/templates?category=ecommerce" \
 
 ---
 
-## 9. Estimate Cost
+## 9. Export Template
 
-### POST /api/cost
+### GET /api/v1/templates/:id/export
+
+Export a template as a `.clawfy-template.json` file for sharing or backup.
+
+**Request:**
+```bash
+curl -s http://localhost:3001/api/v1/templates/tmpl_001/export \
+  -H "x-api-key: $CLAWFY_API_KEY" \
+  -O
+```
+
+**Response:** Downloads a JSON file with `Content-Disposition: attachment` header.
+
+**Response body:**
+```json
+{
+  "version": "1.0",
+  "exportedAt": "2026-04-15T12:00:00.000Z",
+  "template": {
+    "name": "E-commerce Product Shot",
+    "description": "Generate professional product photography",
+    "category": "ecommerce",
+    "dsl": "WORKFLOW product_photo\n  STEP.1.TEXT_PROMPT prompt={{prompt}}\n  STEP.2.IMAGE_GEN model=minimax\n  STEP.3.OUTPUT type=image input=2",
+    "parameterSchema": {
+      "type": "object",
+      "properties": {
+        "prompt": { "type": "string", "description": "Product description" }
+      },
+      "required": ["prompt"]
+    },
+    "tags": ["ecommerce", "product"],
+    "version": 1
+  },
+  "metadata": {
+    "generator": "Clawfy Studio",
+    "appVersion": "0.1.0"
+  }
+}
+```
+
+---
+
+## 10. Import Template
+
+### POST /api/v1/templates/import
+
+Import a template from a `.clawfy-template.json` file.
+
+**Request:**
+```bash
+curl -s -X POST http://localhost:3001/api/v1/templates/import \
+  -H "x-api-key: $CLAWFY_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d @my-template.clawfy-template.json
+```
+
+**Response (201 Created):**
+```json
+{
+  "template": {
+    "id": "tmpl_new123",
+    "name": "My Imported Template",
+    "description": "...",
+    "category": "ecommerce",
+    "dsl": "...",
+    "parameterSchema": {...},
+    "tags": [...],
+    "version": 1
+  }
+}
+```
+
+**Error responses:**
+| Status | Error | Meaning |
+|--------|-------|---------|
+| 400 | `VALIDATION_ERROR` | Invalid template structure, DSL syntax, or parameterSchema |
+| 409 | `CONFLICT` | Template name already exists (auto-renamed with suffix) |
+| 413 | `PAYLOAD_TOO_LARGE` | DSL > 64KB or parameterSchema > 16KB |
+
+---
+
+## 11. Estimate Cost
+
+### POST /api/v1/cost
 
 Estimate the cost of running a workflow before executing.
 
@@ -469,7 +551,7 @@ Estimate the cost of running a workflow before executing.
 
 **Request:**
 ```bash
-curl -s -X POST http://localhost:3001/api/cost \
+curl -s -X POST http://localhost:3001/api/v1/cost \
   -H "x-api-key: $CLAWFY_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{"workflowId": "wf_abc123"}'
@@ -494,17 +576,9 @@ curl -s -X POST http://localhost:3001/api/cost \
 
 ---
 
-## 10. WebSocket Real-Time Updates
+## 12. WebSocket Real-Time Updates
 
-Connect to `ws://localhost:3001/ws?executionId=YOUR_EXECUTION_ID` for live updates.
-
-**Authentication:** Pass the API key as a query parameter in the URL:
-
-```
-ws://localhost:3001/ws?executionId=YOUR_EXECUTION_ID&apiKey=YOUR_API_KEY
-```
-
-**Why this method:** The WebSocket upgrade happens over HTTP, so the `x-api-key` header is not automatically forwarded. Adding `apiKey` as a query param is the supported method for authenticating WebSocket connections to Clawfy.
+Connect to `ws://localhost:3001/ws?executionId=YOUR_EXECUTION_ID&apiKey=YOUR_API_KEY` for live updates.
 
 **Connection example (JavaScript):**
 ```javascript
@@ -513,11 +587,6 @@ const executionId = "exec_xyz789";
 const wsUrl = `ws://localhost:3001/ws?executionId=${executionId}&apiKey=${apiKey}`;
 const ws = new WebSocket(wsUrl);
 ```
-
-**Important security notes:**
-- **NEVER** hardcode the API key in the URL string. Always use `process.env.CLAWFY_API_KEY`
-- **NEVER** log the WebSocket URL — it contains the credentials
-- The API key in the query param is sent over the wire, so always use HTTPS in production
 
 **WebSocket Events:**
 
@@ -547,20 +616,18 @@ const ws = new WebSocket(wsUrl);
 After executing a workflow, you MUST poll until terminal state:
 
 ```
-1. POST /api/executions → get executionId
+1. POST /api/v1/workflows/:id/execute → get executionId
 2. Loop every 5 seconds:
-   GET /api/executions/:id
+   GET /api/v1/executions/:id
 3. Check status:
    - "queued" → continue polling
    - "running" → continue polling
-   - "completed" → GET /api/executions/:id → get outputs
+   - "completed" → GET /api/v1/executions/:id → get outputs
    - "failed" → report error
    - "cancelled" → notify user
 ```
 
 **Maximum polling time:** 30 minutes for video workflows, 5 minutes for image/text.
-
-**Timeout handling:** If status stays "queued" for more than 5 minutes, check if inputs are correct.
 
 ---
 
@@ -599,6 +666,9 @@ Download: https://cdn.clawfy.io/outputs/img_001.png
 | 401 | `UNAUTHORIZED` | Invalid or missing API key |
 | 404 | `WORKFLOW_NOT_FOUND` | Workflow ID does not exist |
 | 404 | `EXECUTION_NOT_FOUND` | Execution ID does not exist |
+| 404 | `TEMPLATE_NOT_FOUND` | Template ID does not exist |
+| 409 | `CONFLICT` | Name already exists (for create operations) |
+| 413 | `PAYLOAD_TOO_LARGE` | DSL or parameterSchema exceeds size limit |
 | 422 | `VALIDATION_ERROR` | Request validates but is semantically wrong |
 | 429 | `RATE_LIMITED` | Too many requests, wait and retry |
 | 500 | `INTERNAL_ERROR` | Server error, try again later |
@@ -610,4 +680,3 @@ Download: https://cdn.clawfy.io/outputs/img_001.png
 For managing brand identities — colors, typography, logo, mood, and style presets — see:
 
 **[rules/style-systems.md](style-systems.md)** — Complete Style System API reference
-

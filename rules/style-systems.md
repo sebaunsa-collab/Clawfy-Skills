@@ -10,13 +10,13 @@ Style Systems let you define brand identities — colors, typography, logo, mood
 
 ## 1. List Style Systems
 
-### GET /api/style-systems
+### GET /api/v1/style-systems
 
 Returns all Style Systems for the authenticated user.
 
 **Request:**
 ```bash
-curl -s http://localhost:3001/api/style-systems \
+curl -s http://localhost:3001/api/v1/style-systems \
   -H "x-api-key: $CLAWFY_API_KEY"
 ```
 
@@ -66,13 +66,13 @@ curl -s http://localhost:3001/api/style-systems \
 
 ## 2. Get Style System
 
-### GET /api/style-systems/:id
+### GET /api/v1/style-systems/:id
 
 Get a specific Style System by ID.
 
 **Request:**
 ```bash
-curl -s http://localhost:3001/api/style-systems/LEF32mo3L3uCodboHq9o \
+curl -s http://localhost:3001/api/v1/style-systems/LEF32mo3L3uCodboHq9o \
   -H "x-api-key: $CLAWFY_API_KEY"
 ```
 
@@ -110,7 +110,7 @@ curl -s http://localhost:3001/api/style-systems/LEF32mo3L3uCodboHq9o \
 
 ## 3. Create Style System
 
-### POST /api/style-systems
+### POST /api/v1/style-systems
 
 Create a new Style System with brand identity parameters.
 
@@ -185,7 +185,7 @@ Presets are suggested visual families — you can use any string value. Common p
 ### Request Example
 
 ```bash
-curl -s -X POST http://localhost:3001/api/style-systems \
+curl -s -X POST http://localhost:3001/api/v1/style-systems \
   -H "x-api-key: $CLAWFY_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{
@@ -244,7 +244,7 @@ curl -s -X POST http://localhost:3001/api/style-systems \
 
 ## 4. Update Style System
 
-### PUT /api/style-systems/:id
+### PUT /api/v1/style-systems/:id
 
 Update an existing Style System. Only include fields you want to change.
 
@@ -255,7 +255,7 @@ Same fields as POST. All fields optional — only provided fields are updated.
 **Request Example: Update mood and colors**
 
 ```bash
-curl -s -X PUT http://localhost:3001/api/style-systems/LEF32mo3L3uCodboHq9o \
+curl -s -X PUT http://localhost:3001/api/v1/style-systems/LEF32mo3L3uCodboHq9o \
   -H "x-api-key: $CLAWFY_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{
@@ -304,13 +304,13 @@ curl -s -X PUT http://localhost:3001/api/style-systems/LEF32mo3L3uCodboHq9o \
 
 ## 5. Delete Style System
 
-### DELETE /api/style-systems/:id
+### DELETE /api/v1/style-systems/:id
 
 Delete a Style System permanently.
 
 **Request:**
 ```bash
-curl -s -X DELETE http://localhost:3001/api/style-systems/LEF32mo3L3uCodboHq9o \
+curl -s -X DELETE http://localhost:3001/api/v1/style-systems/LEF32mo3L3uCodboHq9o \
   -H "x-api-key: $CLAWFY_API_KEY"
 ```
 
@@ -369,4 +369,4 @@ Agent: "Vamos a crear tu Style System. Necesito unos datos:
 Podemos empezar con los que tengas y ir completando después."
 ```
 
-**Partial creation:** If user only has some fields, create the Style System with what they provided and note the rest as `null`. They can update later with `PUT /api/style-systems/:id`.
+**Partial creation:** If user only has some fields, create the Style System with what they provided and note the rest as `null`. They can update later with `PUT /api/v1/style-systems/:id`.

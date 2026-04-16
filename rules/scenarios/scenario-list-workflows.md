@@ -13,7 +13,7 @@ This scenario shows how to list all workflows and present them to the user.
 ### 1. Call List Workflows API
 
 ```bash
-GET /api/workflows?limit=10
+GET /api/v1/workflows?limit=10
 ```
 
 ### 2. Parse the response
@@ -54,7 +54,7 @@ If the list is long, ask the user which one they want (by number or name).
 User: "What workflows do I have?"
 
 Assistant:
-*Call GET /api/workflows with limit=10*
+*Call GET /api/v1/workflows with limit=10*
 
 📋 Your Workflows
 
@@ -75,7 +75,7 @@ Enter the number of the workflow you want to execute, or "cancel" to abort.
 If the user specifies a preference (e.g., "ecommerce workflows"), filter the list:
 
 ```bash
-GET /api/workflows
+GET /api/v1/workflows
 # Then filter client-side by tags
 ```
 

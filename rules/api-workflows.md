@@ -538,7 +538,54 @@ curl -s -X POST http://localhost:3001/api/v1/templates/import \
 
 ---
 
-## 11. Estimate Cost
+## 11. Execute Template
+
+### POST /api/v1/templates/:id/execute
+
+Execute a template with provided parameters. The DSL placeholders (`{{paramName}}`) are substituted with the values from `params` before execution.
+
+**Request Body:**
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `params` | object | Yes | Key-value pairs matching the template's `parameterSchema` |
+| `seed` | number | No | Random seed for reproducibility |
+| `quantization` | string | No | Quantization level: `fp16` (default), `int8`, `int4` |
+
+**Request:**
+```bash
+curl -s -X POST http://localhost:3001/api/v1/templates/tmpl_001/execute \
+  -H "x-api-key: $CLAWFY_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "params": {
+      "prompt": "A sunset over the ocean",
+      "aspect_ratio": "16:9"
+    },
+    "seed": 42
+  }'
+```
+
+**Response (200 OK):**
+```json
+{
+  "executionId": "exec_abc123",
+  "status": "queued",
+  "substitutedDsl": "WORKFLOW product_photo\n  STEP.1.TEXT_PROMPT prompt=A sunset over the ocean\n  STEP.2.IMAGE_GEN..."
+}
+```
+
+**WebSocket:** Connect to `ws://localhost:3001/ws?executionId=exec_abc123&apiKey=YOUR_API_KEY` for real-time node events (`node_start`, `node_progress`, `node_complete`, `execution_complete`, `execution_error`).
+
+**Error responses:**
+| Status | Error | Meaning |
+|--------|-------|---------|
+| 400 | `VALIDATION_ERROR` | Missing required params or type mismatch |
+| 404 | `NOT_FOUND` | Template does not exist |
+| 500 | Internal Server Error | DSL substitution failed or execution error |
+
+---
+
+## 12. Estimate Cost
 
 ### POST /api/v1/cost
 
@@ -576,7 +623,7 @@ curl -s -X POST http://localhost:3001/api/v1/cost \
 
 ---
 
-## 12. WebSocket Real-Time Updates
+## 13. WebSocket Real-Time Updates
 
 Connect to `ws://localhost:3001/ws?executionId=YOUR_EXECUTION_ID&apiKey=YOUR_API_KEY` for live updates.
 

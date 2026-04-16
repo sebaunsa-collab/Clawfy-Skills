@@ -9,13 +9,13 @@
 
 ## 1. Health Check
 
-### GET /api/health
+### GET /health
 
 Verify the API is running and healthy.
 
 **Request:**
 ```bash
-curl -s http://localhost:3001/api/health \
+curl -s http://localhost:3001/health \
   -H "x-api-key: $CLAWFY_API_KEY"
 ```
 
